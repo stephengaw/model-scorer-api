@@ -22,6 +22,26 @@ Content-Type application/json
 }
 ```
 
+#### Example
+
+Request:
+
+```
+curl --request POST \
+  --url http://127.0.0.1/register \
+  --header 'content-type: application/json' \
+  --data '{"username": "stephen", "password": "asdf"}'
+```
+
+Response:
+
+```
+{
+    "message": "User created successfully."
+}
+```
+
+
 ### POST /auth
 
 Authenticate a user with username and password, generating a JWT.
@@ -39,17 +59,56 @@ Content-Type application/json
 }
 ```
 
+#### Example
+
+Request:
+
+```
+curl --request POST \
+  --url http://{URL}/auth \
+  --header 'content-type: application/json' \
+  --data '{"username": "stephen", "password": "asdf"}'
+```
+
+Response:
+
+```
+{
+    "access_token": "{JWT_TOKEN}"
+}
+```
+
 ### GET /scorers
 
 List the descriptions of all the scorers that are uploaded, and can be scored against.
 
 #### Example
 
+Request:
+
 ```
 curl --request GET \
   --url http://{URL}/scorers
 ```
 
+Response:
+
+```
+{
+    "scorers": [
+        {
+            "scorer_id": "model2",
+            "scorer_summary": "DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,\n            max_features=None, max_leaf_nodes=None,\n            min_impurity_decrease=0.0, min_impurity_split=None,\n            min_samples_leaf=1, min_samples_split=2,\n            min_weight_fraction_leaf=0.0, presort=False, random_state=None,\n            splitter='best')",
+            "scorer_uploaded": null
+        },
+        {
+            "scorer_id": "model3",
+            "scorer_summary": "RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',\n            max_depth=None, max_features='auto', max_leaf_nodes=None,\n            min_impurity_decrease=0.0, min_impurity_split=None,\n            min_samples_leaf=1, min_samples_split=2,\n            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,\n            oob_score=False, random_state=None, verbose=0,\n            warm_start=False)",
+            "scorer_uploaded": null
+        }
+    ]
+}
+```
 
 ### GET /scorers/{scorer_id}
 
@@ -72,11 +131,32 @@ The `dill` serialised `sklearn` fitted model object.
 
 #### Example
 
+Request:
+
 ```
 curl --request POST \
   --url http://{URL}/scorers/model3 \
   --header 'authorization: JWT {JWT_TOKEN}' \
   --data-binary "@test-examples/iris_rf_model.pkl"
+```
+
+Response:
+
+```
+{
+    "scorers": [
+        {
+            "scorer_id": "model2",
+            "scorer_summary": "DecisionTreeClassifier(class_weight=None, criterion='gini', max_depth=None,\n            max_features=None, max_leaf_nodes=None,\n            min_impurity_decrease=0.0, min_impurity_split=None,\n            min_samples_leaf=1, min_samples_split=2,\n            min_weight_fraction_leaf=0.0, presort=False, random_state=None,\n            splitter='best')",
+            "scorer_uploaded": null
+        },
+        {
+            "scorer_id": "model3",
+            "scorer_summary": "RandomForestClassifier(bootstrap=True, class_weight=None, criterion='gini',\n            max_depth=None, max_features='auto', max_leaf_nodes=None,\n            min_impurity_decrease=0.0, min_impurity_split=None,\n            min_samples_leaf=1, min_samples_split=2,\n            min_weight_fraction_leaf=0.0, n_estimators=10, n_jobs=1,\n            oob_score=False, random_state=None, verbose=0,\n            warm_start=False)",
+            "scorer_uploaded": null
+        }
+    ]
+}
 ```
 
 ### DELETE /scorers/{scorer_id}
