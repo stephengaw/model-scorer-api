@@ -1,3 +1,9 @@
+# python stuff
 __pycache__
-.DS_Store
 *.pyc
+
+# Mac stuff
+.DS_Store
+
+# PyCharm stuff
+.idea/*
