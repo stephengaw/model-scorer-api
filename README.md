@@ -326,8 +326,8 @@ docker run -p 80:80 --name model-scorer-api model-scorer-api
 
 * Hash passwords in database.
 * Use external database for persistence.
-* Disable open registration of users, configure an admin user and only allow 
-the admin to register new users.
+* Disable open registration of users
+* Configure an admin user and only allow the admin to register new users.
 * Unsure if Nginx should be in the same container as the flask app running 
  with uWSGI. Would it be better to refactor into seperate orchestrated container
  services?
