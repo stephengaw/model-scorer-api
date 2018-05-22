@@ -121,7 +121,7 @@ must be in the form of a `dill` serialised python object.
 
 #### Headers
 
-* Authorization   JWT {{jwt_token}}
+* Authorization   Bearer {{jwt_token}}
 
 #### Body
 
@@ -136,7 +136,7 @@ Request:
 ```
 curl --request POST \
   --url http://{URL}/scorers/model3 \
-  --header 'authorization: JWT {JWT_TOKEN}' \
+  --header 'authorization: Bearer {JWT_TOKEN}' \
   --data-binary "@test-examples/iris_rf_model.pkl"
 ```
 
@@ -165,7 +165,7 @@ Remove the specific scorer, identified by `scorer_id`.
 
 #### Headers
 
-* Authorization   JWT {{jwt_token}}
+* Authorization   Bearer {{jwt_token}}
 
 ### PUT /scorers/{scorer_id}
 
@@ -174,7 +174,7 @@ already exist, create a new scorer, with that `scorer_id`.
 
 #### Headers
 
-* Authorization   JWT {{jwt_token}}
+* Authorization   Bearer {{jwt_token}}
 
 #### Body
 
@@ -192,7 +192,7 @@ into a pandas dataframe for use with the sklearn model.
 #### Headers
 
 * Content-Type application/json
-* Authorization   JWT {{jwt_token}}
+* Authorization   Bearer {{jwt_token}}
 
 #### Body
 
@@ -227,7 +227,7 @@ array for use with the sklearn model.
 #### Headers
 
 * Content-Type application/json
-* Authorization   JWT {{jwt_token}}
+* Authorization   Bearer {{jwt_token}}
 
 #### Body
 
@@ -242,7 +242,7 @@ array for use with the sklearn model.
 ```bash
 curl --request POST \
   --url http://{URL}/scorers/model3/predict/list \
-  --header 'authorization: JWT {JWT_TOKEN}' \
+  --header 'authorization: Bearer {JWT_TOKEN}' \
   --header 'content-type: application/json' \
   --data '{"features": [1.0,1.0,3.0,2.0]}'
 ```
@@ -257,7 +257,7 @@ into a pandas dataframe for use with the sklearn model.
 #### Headers
 
 * Content-Type application/json
-* Authorization   JWT {{jwt_token}}
+* Authorization   Bearer {{jwt_token}}
 
 
 #### Body

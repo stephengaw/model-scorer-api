@@ -1,11 +1,9 @@
-from datetime import datetime
 import dill
 import numpy as np
 import pandas as pd
 from flask import request
 from flask_restful import Resource, reqparse
-from flask_jwt import jwt_required
-import sqlite3
+from flask_jwt_extended import jwt_required, get_jwt_claims
 from models.scorer import ScorerModel
 
 
@@ -17,7 +15,7 @@ class Scorer(Resource):
             return scorer.json(), 200
         return {'message': 'Cannot find scorer_id.'}, 404
 
-    @jwt_required()
+    @jwt_required
     def post(self, scorer_id):
         if ScorerModel.find_by_scorer_id(scorer_id):
             return {'message': "A scorer with scorer_id '{}' already exists.".format(scorer_id)}, 400
@@ -38,7 +36,7 @@ class Scorer(Resource):
 
         return scorer.json(), 201
 
-    @jwt_required()
+    @jwt_required
     def put(self, scorer_id):
         data = request.get_data()
         scorer_obj = dill.loads(data)
@@ -58,10 +56,13 @@ class Scorer(Resource):
 
         return scorer.json()
 
-    @jwt_required()
+    @jwt_required
     def delete(self, scorer_id):
-        scorer = ScorerModel.find_by_scorer_id(scorer_id)
+        claims = get_jwt_claims()
+        if not claims['is_admin']:
+            return {'message': 'Admin privileges required.'}, 401
 
+        scorer = ScorerModel.find_by_scorer_id(scorer_id)
         if scorer:
             scorer.delete_from_db()
             return {'message': "Scorer '{}' deleted.".format(scorer_id)}, 200
@@ -77,7 +78,7 @@ class ScorerList(Resource):
 
 class ScorerPredictWithList(Resource):
 
-    @jwt_required()
+    @jwt_required
     def post(self, scorer_id):
 
         parser = reqparse.RequestParser()
@@ -103,7 +104,7 @@ class ScorerPredictWithList(Resource):
 
 class ScorerPredictWithDict(Resource):
 
-    @jwt_required()
+    @jwt_required
     def post(self, scorer_id):
 
         parser = reqparse.RequestParser()
@@ -128,7 +129,7 @@ class ScorerPredictWithDict(Resource):
 
 class ScorerTransformWithDict(Resource):
 
-    @jwt_required()
+    @jwt_required
     def post(self, scorer_id):
 
         parser = reqparse.RequestParser()
