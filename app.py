@@ -4,7 +4,9 @@ import secrets
 from flask import Flask, jsonify
 from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from werkzeug.security import safe_str_cmp
 
+from models.user import UserModel
 from resources.scorer import Scorer, ScorerList, ScorerPredictWithList, ScorerPredictWithDict, ScorerTransformWithDict
 from resources.user import UserRegister, User, UserAuth, TokenRefresh, UserRevoke
 from revoked import REVOKED
@@ -23,7 +25,8 @@ jwt = JWTManager(app)
 
 @jwt.user_claims_loader
 def add_claims_to_jwt(identity):
-    if identity == 1:  # should use config file or database
+    user = UserModel.find_by_id(identity)
+    if safe_str_cmp(user.username, 'admin'):  # should use config file or database
         return {'is_admin': True}
     return {'is_admin': False}
 
