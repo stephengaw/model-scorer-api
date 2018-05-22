@@ -1,3 +1,6 @@
+# App
+data.db
+
 # python stuff
 __pycache__
 *.pyc
