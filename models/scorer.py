@@ -1,9 +1,9 @@
 import dill
+
 from db import db
 
 
 class ScorerModel(db.Model):
-
     __tablename__ = 'scorers'
 
     # id = db.Column(db.Integer, primary_key=True)

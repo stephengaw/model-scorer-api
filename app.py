@@ -2,8 +2,8 @@ import os
 import secrets
 
 from flask import Flask, jsonify
-from flask_restful import Api
 from flask_jwt_extended import JWTManager
+from flask_restful import Api
 from werkzeug.security import safe_str_cmp
 
 from models.user import UserModel
@@ -13,7 +13,7 @@ from revoked import REVOKED
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///data.db')
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # changes the extensions tracker behaviour, not underlying SQLAlchemy behaviour
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # changes behaviour of the extensions tracker, not underlying SQLAlchemy
 app.config['PROPAGATE_EXCEPTIONS'] = True  # for errors in JWT extended
 app.config['JWT_BLACKLIST_ENABLED'] = True
 app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
@@ -89,5 +89,6 @@ api.add_resource(TokenRefresh, '/refresh')
 
 if __name__ == '__main__':
     from db import db
+
     db.init_app(app)
     app.run(port=5001, debug=True)

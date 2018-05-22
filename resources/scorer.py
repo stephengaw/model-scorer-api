@@ -2,7 +2,6 @@ import dill
 import numpy as np
 import pandas as pd
 from flask import request
-from flask_restful import Resource, reqparse
 from flask_jwt_extended import (
     jwt_required,
     get_jwt_claims,
@@ -10,11 +9,12 @@ from flask_jwt_extended import (
     get_jwt_identity,
     fresh_jwt_required
 )
+from flask_restful import Resource, reqparse
+
 from models.scorer import ScorerModel
 
 
 class Scorer(Resource):
-
     @jwt_optional
     def get(self, scorer_id):
         user_id = get_jwt_identity()
@@ -24,9 +24,9 @@ class Scorer(Resource):
                 return scorer.json(), 200
             else:
                 return {
-                    'scorer': scorer.scorer_id,
-                    'message': 'More details available with authentication.'
-                }, 200
+                           'scorer': scorer.scorer_id,
+                           'message': 'More details available with authentication.'
+                       }, 200
         return {'message': 'Cannot find scorer_id.'}, 404
 
     @fresh_jwt_required
@@ -84,7 +84,6 @@ class Scorer(Resource):
 
 
 class ScorerList(Resource):
-
     @jwt_optional
     def get(self):
         user_id = get_jwt_identity()
@@ -93,13 +92,12 @@ class ScorerList(Resource):
         if user_id:
             return {'scorers': [scorer.json() for scorer in scorers]}, 200
         return {
-            'scorers': [scorer.scorer_id for scorer in scorers],
-            'message': 'More details available with authentication.'
-        }, 200
+                   'scorers': [scorer.scorer_id for scorer in scorers],
+                   'message': 'More details available with authentication.'
+               }, 200
 
 
 class ScorerPredictWithList(Resource):
-
     @jwt_required
     def post(self, scorer_id):
 
@@ -125,7 +123,6 @@ class ScorerPredictWithList(Resource):
 
 
 class ScorerPredictWithDict(Resource):
-
     @jwt_required
     def post(self, scorer_id):
 
@@ -150,7 +147,6 @@ class ScorerPredictWithDict(Resource):
 
 
 class ScorerTransformWithDict(Resource):
-
     @jwt_required
     def post(self, scorer_id):
 

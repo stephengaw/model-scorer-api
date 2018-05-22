@@ -1,4 +1,3 @@
-from flask_restful import Resource, reqparse
 from flask_jwt_extended import (
     jwt_required,
     create_access_token,
@@ -7,10 +6,11 @@ from flask_jwt_extended import (
     jwt_refresh_token_required,
     get_raw_jwt
 )
+from flask_restful import Resource, reqparse
 from werkzeug.security import safe_str_cmp
+
 from models.user import UserModel
 from revoked import REVOKED
-
 
 _user_parser = reqparse.RequestParser()
 _user_parser.add_argument('username', required=True, type=str, help='This field cannot be blank')
@@ -18,9 +18,7 @@ _user_parser.add_argument('password', required=True, type=str, help='This field 
 
 
 class UserRegister(Resource):
-
     def post(self):
-
         data = _user_parser.parse_args()
 
         if UserModel.find_by_username(data['username']):
@@ -32,7 +30,6 @@ class UserRegister(Resource):
 
 
 class User(Resource):
-
     @jwt_required
     def get(self, _id):
 
@@ -57,7 +54,6 @@ class User(Resource):
 
 
 class UserAuth(Resource):
-
     @classmethod
     def post(cls):
         data = _user_parser.parse_args()
@@ -68,22 +64,21 @@ class UserAuth(Resource):
             access_token = create_access_token(identity=user.id, fresh=True)
             refresh_token = create_refresh_token(user.id)
             return {
-                "access_token": access_token,
-                "refresh_token": refresh_token
-            }, 200
+                       "access_token": access_token,
+                       "refresh_token": refresh_token
+                   }, 200
 
         return {"message": "Invalid credentials."}, 401
 
 
 class UserRevoke(Resource):
-
     @jwt_required
     def post(self):
         jti = get_raw_jwt()['jti']
         REVOKED.add(jti)
         return {
-            'message': 'Successfully revoked user token.'
-        }, 200
+                   'message': 'Successfully revoked user token.'
+               }, 200
 
 
 class TokenRefresh(Resource):
