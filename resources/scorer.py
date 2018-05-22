@@ -3,19 +3,33 @@ import numpy as np
 import pandas as pd
 from flask import request
 from flask_restful import Resource, reqparse
-from flask_jwt_extended import jwt_required, get_jwt_claims
+from flask_jwt_extended import (
+    jwt_required,
+    get_jwt_claims,
+    jwt_optional,
+    get_jwt_identity,
+    fresh_jwt_required
+)
 from models.scorer import ScorerModel
 
 
 class Scorer(Resource):
 
+    @jwt_optional
     def get(self, scorer_id):
+        user_id = get_jwt_identity()
         scorer = ScorerModel.find_by_scorer_id(scorer_id)
         if scorer:
-            return scorer.json(), 200
+            if user_id:
+                return scorer.json(), 200
+            else:
+                return {
+                    'scorer': scorer.scorer_id,
+                    'message': 'More details available with authentication.'
+                }, 200
         return {'message': 'Cannot find scorer_id.'}, 404
 
-    @jwt_required
+    @fresh_jwt_required
     def post(self, scorer_id):
         if ScorerModel.find_by_scorer_id(scorer_id):
             return {'message': "A scorer with scorer_id '{}' already exists.".format(scorer_id)}, 400
@@ -36,7 +50,7 @@ class Scorer(Resource):
 
         return scorer.json(), 201
 
-    @jwt_required
+    @fresh_jwt_required
     def put(self, scorer_id):
         data = request.get_data()
         scorer_obj = dill.loads(data)
@@ -56,7 +70,7 @@ class Scorer(Resource):
 
         return scorer.json()
 
-    @jwt_required
+    @fresh_jwt_required
     def delete(self, scorer_id):
         claims = get_jwt_claims()
         if not claims['is_admin']:
@@ -71,9 +85,17 @@ class Scorer(Resource):
 
 class ScorerList(Resource):
 
+    @jwt_optional
     def get(self):
+        user_id = get_jwt_identity()
         scorers = ScorerModel.find_all_scorers()
-        return {'scorers': [scorer.json() for scorer in scorers]}
+
+        if user_id:
+            return {'scorers': [scorer.json() for scorer in scorers]}, 200
+        return {
+            'scorers': [scorer.scorer_id for scorer in scorers],
+            'message': 'More details available with authentication.'
+        }, 200
 
 
 class ScorerPredictWithList(Resource):
